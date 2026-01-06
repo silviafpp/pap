@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>BusApp - Teste de Autenticação</title>
+    <style>
+        body { font-family: sans-serif; display: flex; gap: 20px; padding: 20px; background: #f4f4f4; }
+        .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 300px; }
+        input { width: 100%; margin-bottom: 10px; padding: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
+        .msg { margin-top: 10px; font-size: 0.9em; padding: 5px; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h3>1. Criar Conta</h3>
+        <input type="text" id="reg_first" placeholder="Primeiro Nome">
+        <input type="text" id="reg_last" placeholder="Apelido">
+        <input type="email" id="reg_email" placeholder="Email">
+        <input type="password" id="reg_pass" placeholder="Password">
+        <button onclick="testRegister()">Registar</button>
+        <div id="reg_msg" class="msg"></div>
+    </div>
+
+    <div class="box">
+        <h3>2. Testar Login</h3>
+        <input type="email" id="log_email" placeholder="Email">
+        <input type="password" id="log_pass" placeholder="Password">
+        <button onclick="testLogin()" style="background: #28a745;">Entrar</button>
+        <div id="log_msg" class="msg"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        async function testRegister() {
+            const div = document.getElementById('reg_msg');
+            const data = {
+                first_name: document.getElementById('reg_first').value,
+                last_name: document.getElementById('reg_last').value,
+                email: document.getElementById('reg_email').value,
+                password: document.getElementById('reg_pass').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                div.className = 'msg ' + (res.ok ? 'success' : 'error');
+                div.innerText = res.ok ? "Sucesso! Utilizador criado." : "Erro: " + result.error;
+            } catch (e) { div.innerText = "Erro ao ligar ao servidor."; }
+        }
+
+        async function testLogin() {
+            const div = document.getElementById('log_msg');
+            const data = {
+                email: document.getElementById('log_email').value,
+                password: document.getElementById('log_pass').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                div.className = 'msg ' + (res.ok ? 'success' : 'error');
+                div.innerText = res.ok ? "Login OK! ID: " + result.userId : "Erro: " + result.error;
+                if(res.ok) localStorage.setItem('userId', result.userId);
+            } catch (e) { div.innerText = "Erro ao ligar ao servidor."; }
+        }
+    </script>
+</body>
+</html>
