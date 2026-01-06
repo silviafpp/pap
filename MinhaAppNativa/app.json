@@ -1,4 +1,15 @@
 {
-  "name": "MinhaAppNativa",
-  "displayName": "MinhaAppNativa"
+  "expo": {
+    "name": "MinhaAppNativa",
+    "slug": "minha-app-nativa",
+    "version": "1.0.0",
+    "platforms": ["android", "ios"],
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.tomas.pap"
+    }
+  }
 }

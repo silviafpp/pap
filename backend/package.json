@@ -6,14 +6,10 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "@react-navigation/native": "^7.1.26",
-    "@react-navigation/native-stack": "^7.9.0",
-    "argon2": "^0.44.0",
-    "cors": "^2.8.5",
     "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.3",
     "pg": "^8.11.3",
-    "react-native-safe-area-context": "^5.6.2",
-    "react-native-screens": "^4.19.0"
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.3",
+    "argon2": "^0.44.0"
   }
 }
