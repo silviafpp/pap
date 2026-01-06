@@ -9,7 +9,7 @@ export default function LoginScreen({ navigation }: any) {
   const handleLogin = async () => {
     try {
       // Chamada à nova rota de login que criámos no backend
-      const response = await axios.post('http://10.0.2.2:3000/login', { email, password });
+      const response = await axios.post('https://pap-production-5394.up.railway.app/login', { email, password });
 
       if (response.status === 200) {
         Alert.alert('Bem-vindo!', `Olá ${response.data.user.firstName}`);

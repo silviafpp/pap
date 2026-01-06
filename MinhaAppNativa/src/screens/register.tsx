@@ -22,7 +22,7 @@ export default function App() {
        * Usa-se o IP 10.0.2.2 para aceder ao teu computador (onde o Docker está).
        * Porta: 3000 (conforme configurado no teu docker-compose).
        */
-      const response = await axios.post('http://10.0.2.2:3000/register', {
+      const response = await axios.post('https://pap-production-5394.up.railway.app/register', {
         firstName: firstName,
         lastName: lastName,
         email: email,

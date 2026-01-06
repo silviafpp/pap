@@ -8,21 +8,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Chave secreta para assinar os tokens (Muda isto para algo complexo na PAP)
+// 1. CHAVE SECRETA (Puxa das variáveis de ambiente do Railway)
 const SECRET_KEY = process.env.JWT_SECRET || 'chave_secreta_super_segura_123';
 
+// 2. CONFIGURAÇÃO DA BASE DE DADOS (Ajustada para Railway)
 const pool = new Pool({
-  user: 'admin',
-  host: 'db', // 'db' para Docker, 'localhost' para correr node localmente
-  database: 'bus_app',
-  password: 'admin123',
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // Necessário para ligar a bases de dados na nuvem
+  }
 });
 
 // Teste de conexão
 pool.connect((err) => {
-  if (err) console.error('ERRO DE CONEXÃO À BD:', err.stack);
-  else console.log('Conectado à base de dados com sucesso!');
+  if (err) console.error('ERRO DE CONEXÃO À BD NO RAILWAY:', err.stack);
+  else console.log('Conectado à base de dados do Railway com sucesso!');
 });
 
 // --- ROTA DE REGISTO ---
@@ -44,14 +44,10 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        // 1. Procurar user
         const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         const user = result.rows[0];
 
-        // 2. Verificar password e gerar Token
         if (user && await passwordUtils.verifyPassword(user.password_hash, password)) {
-            
-            // Gerar o JWT (Expira em 24h)
             const token = jwt.sign(
                 { userId: user.id, email: user.email },
                 SECRET_KEY,
@@ -68,14 +64,15 @@ app.post('/login', async (req, res) => {
                 } 
             });
         }
-
-        // Se falhar user ou password
         res.status(401).json({ error: 'Credenciais inválidas' });
-
     } catch (err) {
         console.error("Erro no Login:", err.message);
         res.status(500).json({ error: 'Erro no servidor' });
     }
 });
 
-app.listen(3000, () => console.log("Servidor ligado na porta 3000"));
+// 3. PORTA DINÂMICA (O Railway atribui a porta automaticamente)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor ativo em: http://0.0.0.0:${PORT}`);
+});
